@@ -1,0 +1,40 @@
+services:
+  db:
+    image: mariadb
+    volumes:
+      - db-pos:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: robi8741.
+      MYSQL_DATABASE: tokoku
+      MYSQL_USER: robi
+      MYSQL_PASSWORD: robi8741.
+    networks:
+      new-net:
+        ipv4_address: 172.16.0.2
+
+
+  apps:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+#put two port for multiple scalable container
+    ports:
+      - "5000-5001:80"
+    restart: always
+    networks:
+      new-net:
+
+
+volumes:
+  db-pos:
+
+networks:
+  new-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/24
+          gateway: 172.16.0.1
